@@ -9,19 +9,22 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.TrackMe">
-
-        <activity android:name=".SensorsArrayActivity"
+        <activity
+            android:name=".AccelerometerActivity"
+            android:parentActivityName=".SensorsArrayActivity" />
+        <activity
+            android:name=".SensorsArrayActivity"
             android:parentActivityName=".MainActivity" />
-
-        <activity android:name=".DisplayMessageActivity"
-                  android:parentActivityName=".MainActivity" />
-
+        <activity
+            android:name=".DisplayMessageActivity"
+            android:parentActivityName=".MainActivity" />
         <activity android:name=".MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
+
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-
     </application>
+
 </manifest>
