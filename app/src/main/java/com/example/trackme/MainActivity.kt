@@ -22,4 +22,9 @@ class MainActivity : AppCompatActivity() {
         }
         startActivity(intent)
     }
+
+    fun onClickSensorsArrayButton(view: View) {
+        val intent = Intent(this, SensorsArrayActivity::class.java).apply {}
+        startActivity(intent)
+    }
 }
