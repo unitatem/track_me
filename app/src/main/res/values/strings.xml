@@ -12,4 +12,10 @@
     <string name="acc_z_val">%.3f [m/s^2]</string>
     <string name="button_dead_reckoning">Dead reckoning</string>
     <string name="button_tracking">Tracking</string>
+    <string name="pos_N">Position N</string>
+    <string name="pos_E">Position E</string>
+    <string name="pos_H">Altitude</string>
+    <string name="pos_N_val">%.2f [m]</string>
+    <string name="pos_E_val">%.2f [m]</string>
+    <string name="pos_H_val">%.2f [m]</string>
 </resources>
