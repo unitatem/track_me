@@ -61,4 +61,14 @@
         app:layout_constraintBaseline_toBaselineOf="@+id/pos_H"
         app:layout_constraintStart_toStartOf="@+id/pos_E_val_m" />
 
+    <ImageView
+        android:id="@+id/imageView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="16dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:srcCompat="@drawable/axis_device" />
+
 </androidx.constraintlayout.widget.ConstraintLayout>
