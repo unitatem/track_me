@@ -4,8 +4,6 @@
     <string name="button_send">Send</string>
     <string name="button_sensors_array">Sensors array</string>
     <string name="button_acc">Accelerometer</string>
-    <string name="button_gyro">Gyroscope</string>
-    <string name="button_mag">Magnetometer</string>
     <string name="acc_x">X direction</string>
     <string name="acc_y">Y direction</string>
     <string name="acc_z">Z direction</string>
