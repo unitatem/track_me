@@ -41,7 +41,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="32dp"
-        android:text="TextView"
+        android:text="@string/acc_x_val"
         app:layout_constraintBaseline_toBaselineOf="@+id/acc_x"
         app:layout_constraintStart_toEndOf="@+id/acc_x" />
 
@@ -49,7 +49,7 @@
         android:id="@+id/acc_value_y"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="TextView"
+        android:text="@string/acc_y_val"
         app:layout_constraintBaseline_toBaselineOf="@+id/acc_y"
         app:layout_constraintStart_toStartOf="@+id/acc_value_x" />
 
@@ -57,7 +57,7 @@
         android:id="@+id/acc_value_z"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="TextView"
+        android:text="@string/acc_z_val"
         app:layout_constraintBaseline_toBaselineOf="@+id/acc_z"
         app:layout_constraintStart_toStartOf="@+id/acc_value_y" />
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -9,4 +9,9 @@
     <string name="acc_x">X direction</string>
     <string name="acc_y">Y direction</string>
     <string name="acc_z">Z direction</string>
+    <string name="acc_x_val">%.3f [m/s^2]</string>
+    <string name="acc_y_val">%.3f [m/s^2]</string>
+    <string name="acc_z_val">%.3f [m/s^2]</string>
+    <string name="button_dead_reckoning">Dead reckoning</string>
+    <string name="button_tracking">Tracking</string>
 </resources>

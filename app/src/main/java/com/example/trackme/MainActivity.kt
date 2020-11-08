@@ -27,4 +27,9 @@ class MainActivity : AppCompatActivity() {
         val intent = Intent(this, SensorsArrayActivity::class.java).apply {}
         startActivity(intent)
     }
+
+    fun onClickTrackingButton(view: View) {
+        val intent = Intent(this, TrackingActivity::class.java).apply {}
+        startActivity(intent)
+    }
 }

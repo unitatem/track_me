@@ -30,9 +30,10 @@ class AccelerometerActivity : AppCompatActivity(), SensorEventListener {
     override fun onSensorChanged(event: SensorEvent?) {
         if (event == null) return
 
-        findViewById<TextView>(R.id.acc_value_x).text = event.values[0].toString()
-        findViewById<TextView>(R.id.acc_value_y).text = event.values[1].toString()
-        findViewById<TextView>(R.id.acc_value_z).text = event.values[2].toString()
+        val unit_m_s2 = "m/s^2"
+        findViewById<TextView>(R.id.acc_value_x).text = getString(R.string.acc_x_val, event.values[0])
+        findViewById<TextView>(R.id.acc_value_y).text = getString(R.string.acc_x_val, event.values[1])
+        findViewById<TextView>(R.id.acc_value_z).text = getString(R.string.acc_x_val, event.values[2])
     }
 
     override fun onResume() {

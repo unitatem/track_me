@@ -2,7 +2,8 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.example.trackme">
 
-    <uses-feature android:name="android.hardware.sensor.accelerometer"
+    <uses-feature
+        android:name="android.hardware.sensor.accelerometer"
         android:required="true" />
 
     <application
@@ -12,6 +13,12 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.TrackMe">
+        <activity
+            android:name=".DeadReckoningActivity"
+            android:parentActivityName=".TrackingActivity" />
+        <activity
+            android:name=".TrackingActivity"
+            android:parentActivityName=".MainActivity" />
         <activity
             android:name=".AccelerometerActivity"
             android:parentActivityName=".SensorsArrayActivity" />
