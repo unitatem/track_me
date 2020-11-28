@@ -9,23 +9,22 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.os.SystemClock
 import android.widget.TextView
-import java.time.Instant
 
 class DeadReckoningActivity : AppCompatActivity(), SensorEventListener {
     private lateinit var sensorManager: SensorManager
     private var inertiaSensor: Sensor? = null
 
-    private var positionN: Float = 0.0f
-    private var positionE: Float = 0.0f
-    private var positionH: Float = 0.0f
+    private var positionX: Float = 0.0f
+    private var positionY: Float = 0.0f
+    private var positionZ: Float = 0.0f
 
-    private var velocityN: Float = 0.0f
-    private var velocityE: Float = 0.0f
-    private var velocityH: Float = 0.0f
+    private var velocityX: Float = 0.0f
+    private var velocityY: Float = 0.0f
+    private var velocityZ: Float = 0.0f
 
-    private var accelerationN: Float = 0.0f
-    private var accelerationE: Float = 0.0f
-    private var accelerationH: Float = 0.0f
+    private var accelerationX: Float = 0.0f
+    private var accelerationY: Float = 0.0f
+    private var accelerationZ: Float = 0.0f
 
     private var lastTimestampMs: Long = 0
 
@@ -51,21 +50,21 @@ class DeadReckoningActivity : AppCompatActivity(), SensorEventListener {
         val deltaTimeS = deltaTimeMs / 1000.0f
         lastTimestampMs = currentTimestampMs
 
-        accelerationN = event.values[1]
-        accelerationE = event.values[0]
-        accelerationH = event.values[2]
+        accelerationX = event.values[1]
+        accelerationY = event.values[0]
+        accelerationZ = event.values[2]
 
-        velocityN += accelerationN * deltaTimeS
-        velocityE += accelerationE * deltaTimeS
-        velocityH += accelerationH * deltaTimeS
+        velocityX += accelerationX * deltaTimeS
+        velocityY += accelerationY * deltaTimeS
+        velocityZ += accelerationZ * deltaTimeS
 
-        positionN += velocityN * deltaTimeS
-        positionE += velocityE * deltaTimeS
-        positionH += velocityH * deltaTimeS
+        positionX += velocityX * deltaTimeS
+        positionY += velocityY * deltaTimeS
+        positionZ += velocityZ * deltaTimeS
 
-        findViewById<TextView>(R.id.pos_N_val_m).text = getString(R.string.acc_x_val, positionN)
-        findViewById<TextView>(R.id.pos_E_val_m).text = getString(R.string.acc_x_val, positionE)
-        findViewById<TextView>(R.id.pos_H_val_m).text = getString(R.string.acc_x_val, positionH)
+        findViewById<TextView>(R.id.pos_N_val_m).text = getString(R.string.acc_x_val, positionX)
+        findViewById<TextView>(R.id.pos_E_val_m).text = getString(R.string.acc_y_val, positionY)
+        findViewById<TextView>(R.id.pos_H_val_m).text = getString(R.string.acc_z_val, positionZ)
     }
 
     override fun onResume() {
