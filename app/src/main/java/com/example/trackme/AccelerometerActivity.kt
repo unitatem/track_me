@@ -1,6 +1,7 @@
 package com.example.trackme
 
 import android.content.Context
+import android.content.Intent
 import android.hardware.Sensor
 import android.hardware.SensorEvent
 import android.hardware.SensorEventListener
@@ -11,16 +12,21 @@ import android.view.View
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import com.github.mikephil.charting.charts.LineChart
+import com.github.mikephil.charting.components.YAxis
 import com.github.mikephil.charting.data.Entry
 import com.github.mikephil.charting.data.LineData
 import com.github.mikephil.charting.data.LineDataSet
+import kotlin.math.PI
+import kotlin.math.sin
 
 
 class AccelerometerActivity : AppCompatActivity(), SensorEventListener {
+    private val TAG = "AccelerometerActivity"
+
     private lateinit var sensorManager: SensorManager
     private var accSensor: Sensor? = null
-    private val logTag = "AccelerometerActivity"
 
+    private var chart: LineChart? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -29,21 +35,12 @@ class AccelerometerActivity : AppCompatActivity(), SensorEventListener {
         sensorManager = getSystemService(Context.SENSOR_SERVICE) as SensorManager
         accSensor = sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER)
 
-
-        val chart = findViewById<View>(R.id.acc_chart) as LineChart
+        chart = findViewById<View>(R.id.acc_chart) as LineChart
 
         val entries: MutableList<Entry> = mutableListOf()
-        entries.add(Entry(0.0f, 0.0f))
-        entries.add(Entry(1.0f, 1.0f))
-        entries.add(Entry(2.0f, 0.0f))
-        entries.add(Entry(3.0f, -1.0f))
-        entries.add(Entry(4.0f, 0.0f))
-
-        val dataSet = LineDataSet(entries, "sin")
-
+        val dataSet = LineDataSet(entries, "x")
         val lineData = LineData(dataSet)
-        chart.data = lineData
-        chart.invalidate()
+        chart!!.data = lineData
     }
 
     override fun onAccuracyChanged(sensor: Sensor?, accuracy: Int) {
@@ -64,18 +61,35 @@ class AccelerometerActivity : AppCompatActivity(), SensorEventListener {
             R.string.acc_x_val,
             event.values[2]
         )
+
+        chart!!.data.getDataSetByLabel("x", false).addEntry(Entry(chart!!.data.entryCount.toFloat(), event.values[0]))
+
+        chart!!.data.notifyDataChanged()
+        chart!!.notifyDataSetChanged()
+
+        chart!!.setVisibleXRangeMaximum(50.0f);
+        chart!!.moveViewToX(chart!!.data.entryCount.toFloat());
+    }
+
+    // TODO remove later
+    fun onClickButton(view: View) {
+        chart!!.data.getDataSetByLabel("x", false).addEntry(Entry(chart!!.data.entryCount.toFloat(), 1.0f))
+
+        chart!!.data.notifyDataChanged()
+        chart!!.notifyDataSetChanged()
+        chart!!.invalidate();
     }
 
     override fun onResume() {
-        Log.v(logTag, "onResume() >")
+        Log.v(TAG, "onResume() >")
         super.onResume()
         accSensor?.also { sensor ->
-            sensorManager.registerListener(this, sensor, SensorManager.SENSOR_DELAY_NORMAL)
+            sensorManager.registerListener(this, sensor, SensorManager.SENSOR_DELAY_FASTEST)
         }
     }
 
     override fun onPause() {
-        Log.v(logTag, "onPause() >")
+        Log.v(TAG, "onPause() >")
         super.onPause()
         sensorManager.unregisterListener(this)
     }
