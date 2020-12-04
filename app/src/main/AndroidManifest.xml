@@ -21,7 +21,8 @@
             android:parentActivityName=".MainActivity" />
         <activity
             android:name=".AccelerometerActivity"
-            android:parentActivityName=".SensorsArrayActivity" />
+            android:parentActivityName=".SensorsArrayActivity"
+            android:screenOrientation="portrait" />
         <activity
             android:name=".SensorsArrayActivity"
             android:parentActivityName=".MainActivity" />
