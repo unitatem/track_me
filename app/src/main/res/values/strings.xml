@@ -18,4 +18,5 @@
     <string name="pos_N_val">%.2f [m]</string>
     <string name="pos_E_val">%.2f [m]</string>
     <string name="pos_H_val">%.2f [m]</string>
+    <string name="button_wifi">WiFi</string>
 </resources>

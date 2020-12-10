@@ -14,6 +14,9 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.TrackMe">
         <activity
+            android:name=".WiFiActivity"
+            android:parentActivityName=".SensorsArrayActivity" />
+        <activity
             android:name=".DeadReckoningActivity"
             android:parentActivityName=".TrackingActivity" />
         <activity
