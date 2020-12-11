@@ -8,6 +8,7 @@ import android.content.pm.PackageManager
 import android.net.wifi.WifiManager
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.util.Log
 import com.google.android.material.snackbar.Snackbar
 
 class WifiActivity : AppCompatActivity() {
@@ -16,6 +17,7 @@ class WifiActivity : AppCompatActivity() {
     private val mRequiredPermissions = arrayOf(
         android.Manifest.permission.ACCESS_COARSE_LOCATION,
         android.Manifest.permission.ACCESS_FINE_LOCATION,
+        android.Manifest.permission.ACCESS_WIFI_STATE,
         android.Manifest.permission.CHANGE_WIFI_STATE
     )
 
@@ -34,7 +36,7 @@ class WifiActivity : AppCompatActivity() {
         ) {
             Snackbar.make(
                 findViewById(R.id.activity_wifi),
-                "WifiActivity: Permissions are present",
+                "Permissions are present",
                 Snackbar.LENGTH_LONG
             ).show()
             startWifiScan()
@@ -46,7 +48,7 @@ class WifiActivity : AppCompatActivity() {
         ) {
             Snackbar.make(
                 findViewById(R.id.activity_wifi),
-                "WifiActivity: Needs this permissions",
+                "Needs this permissions",
                 Snackbar.LENGTH_LONG
             ).show()
         }
@@ -104,6 +106,9 @@ class WifiActivity : AppCompatActivity() {
             "Scan Results Success",
             Snackbar.LENGTH_LONG
         ).show()
+
+        val results = mWifiManager.scanResults
+        Log.d("Wifi", results.toString())
     }
 
     private fun scanRequestFailure() {
