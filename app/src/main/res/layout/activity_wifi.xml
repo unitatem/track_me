@@ -7,4 +7,12 @@
     android:layout_height="match_parent"
     tools:context=".WifiActivity">
 
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/rv_wifi"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        tools:itemCount="4"
+        tools:layout_editor_absoluteX="203dp"
+        tools:layout_editor_absoluteY="217dp"
+        tools:listitem="@layout/wifi_item_view" />
 </androidx.constraintlayout.widget.ConstraintLayout>
