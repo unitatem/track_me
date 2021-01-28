@@ -12,7 +12,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         tools:itemCount="4"
-        tools:layout_editor_absoluteX="203dp"
-        tools:layout_editor_absoluteY="217dp"
-        tools:listitem="@layout/wifi_item_view" />
+        tools:listitem="@layout/wifi_item_view"
+        tools:orientation="vertical"
+        tools:scrollbars="vertical" />
 </androidx.constraintlayout.widget.ConstraintLayout>
