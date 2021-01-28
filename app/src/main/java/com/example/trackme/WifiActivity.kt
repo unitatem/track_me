@@ -47,6 +47,7 @@ class WifiActivity : WifiStrategy() {
         recyclerViewWifi.layoutManager = LinearLayoutManager(this)
     }
 
+    @RequiresApi(Build.VERSION_CODES.R)
     override fun scanResultsSuccess() {
         showMessage("Scan Results Success")
 
@@ -56,13 +57,9 @@ class WifiActivity : WifiStrategy() {
 
         val recyclerViewWifi = findViewById<View>(R.id.rv_wifi) as RecyclerView
         recyclerViewWifi.adapter?.notifyDataSetChanged()
-    }
 
-    @RequiresApi(Build.VERSION_CODES.R)
-    override fun scanResultsFailure() {
-        showMessage("Scan Results Failure")
-        if (EnvironmentInfo().isRealDevice()) return
         // provide mocked data in emulator
+        if (EnvironmentInfo().isRealDevice()) return
 
         val scanResults = ArrayList<ScanResult>()
         for (i in 0..10) {
@@ -75,8 +72,11 @@ class WifiActivity : WifiStrategy() {
         wifiScanResults.clear()
         wifiScanResults.addAll(scanResults)
 
-        val recyclerViewWifi = findViewById<View>(R.id.rv_wifi) as RecyclerView
         recyclerViewWifi.adapter?.notifyDataSetChanged()
+    }
+
+    override fun scanResultsFailure() {
+        showMessage("Scan Results Failure")
     }
 
     override fun scanRequestFailure() {
