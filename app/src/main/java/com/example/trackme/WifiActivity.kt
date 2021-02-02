@@ -31,9 +31,21 @@ class WiFiAdapter(private val dataSet: ArrayList<ScanResult>) :
 
     override fun onBindViewHolder(viewHolder: WifiViewHolder, position: Int) {
         viewHolder.wifiName.text = dataSet[position].SSID
-        viewHolder.wifiRssi.text = viewHolder.itemView.context.getString(R.string.wifi_rssi, dataSet[position].level)
-        viewHolder.wifiFrequency.text = viewHolder.itemView.context.getString(R.string.wifi_frequency, dataSet[position].frequency)
-        viewHolder.wifiDistance.text = viewHolder.itemView.context.getString(R.string.wifi_distance, 0.0)
+
+        viewHolder.wifiRssi.text =
+            viewHolder.itemView.context.getString(R.string.wifi_rssi, dataSet[position].level)
+
+        viewHolder.wifiFrequency.text = viewHolder.itemView.context.getString(
+            R.string.wifi_frequency,
+            dataSet[position].frequency
+        )
+
+        viewHolder.wifiDistance.text = viewHolder.itemView.context.getString(
+            R.string.wifi_distance, WifiDistance().getDistance(
+                dataSet[position].level.toDouble(),
+                WifiDistance.convertMHz2Hz(dataSet[position].frequency.toDouble())
+            )
+        )
     }
 
     override fun getItemCount() = dataSet.size
