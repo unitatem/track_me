@@ -74,38 +74,19 @@ class WifiActivity : WifiStrategy() {
     override fun scanResultsSuccess() {
         showMessage("Scan Results Success")
 
-        run {
-            val scanResults = mWifiManager.scanResults
-            WiFiAdapter.sort(scanResults as ArrayList<ScanResult>)
-
-            wifiScanResults.clear()
-            wifiScanResults.addAll(scanResults)
-            Log.d("Wifi", wifiScanResults.toString())
-
-            val recyclerViewWifi = findViewById<View>(R.id.rv_wifi) as RecyclerView
-            recyclerViewWifi.adapter?.notifyDataSetChanged()
+        val scanResults = if (EnvironmentInfo().isRealDevice()) {
+            mWifiManager.scanResults
+        } else {
+            EnvironmentSimulation.Wifi().getScanResults()
         }
+        WiFiAdapter.sort(scanResults as ArrayList<ScanResult>)
 
-        // provide mocked data in emulator
-        if (EnvironmentInfo().isRealDevice()) return
+        wifiScanResults.clear()
+        wifiScanResults.addAll(scanResults)
+        Log.d("Wifi", wifiScanResults.toString())
 
-        run {
-            val scanResults = ArrayList<ScanResult>()
-            for (i in 0..10) {
-                val sr = ScanResult()
-                sr.SSID = "WiFi Name $i"
-                sr.level = (-90..-30).random()
-                sr.frequency = 2460
-                scanResults.add(sr)
-            }
-            WiFiAdapter.sort(scanResults)
-
-            wifiScanResults.clear()
-            wifiScanResults.addAll(scanResults)
-
-            val recyclerViewWifi = findViewById<View>(R.id.rv_wifi) as RecyclerView
-            recyclerViewWifi.adapter?.notifyDataSetChanged()
-        }
+        val recyclerViewWifi = findViewById<View>(R.id.rv_wifi) as RecyclerView
+        recyclerViewWifi.adapter?.notifyDataSetChanged()
     }
 
     override fun scanResultsFailure() {
