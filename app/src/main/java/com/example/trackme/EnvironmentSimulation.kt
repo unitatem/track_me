@@ -19,4 +19,14 @@ class EnvironmentSimulation {
             return scanResults
         }
     }
+
+    class Bt {
+        fun getBtScanResults(): ArrayList<String> {
+            val scanResults = ArrayList<String>()
+            for (i in 0..10) {
+                scanResults.add("Bt Name $i")
+            }
+            return scanResults
+        }
+    }
 }

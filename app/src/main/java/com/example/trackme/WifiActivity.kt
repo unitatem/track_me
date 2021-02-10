@@ -14,22 +14,22 @@ import androidx.recyclerview.widget.RecyclerView
 
 
 class WiFiAdapter(private val dataSet: ArrayList<ScanResult>) :
-    RecyclerView.Adapter<WiFiAdapter.WifiViewHolder>() {
+    RecyclerView.Adapter<WiFiAdapter.WifiItemViewHolder>() {
 
-    class WifiViewHolder(view: View) : RecyclerView.ViewHolder(view) {
+    class WifiItemViewHolder(view: View) : RecyclerView.ViewHolder(view) {
         val wifiName: TextView = view.findViewById(R.id.wifi_name)
         val wifiRssi: TextView = view.findViewById(R.id.wifi_rssi)
         val wifiFrequency: TextView = view.findViewById(R.id.wifi_frequency)
         val wifiDistance: TextView = view.findViewById(R.id.wifi_distance)
     }
 
-    override fun onCreateViewHolder(viewGroup: ViewGroup, viewType: Int): WifiViewHolder {
+    override fun onCreateViewHolder(viewGroup: ViewGroup, viewType: Int): WifiItemViewHolder {
         val view = LayoutInflater.from(viewGroup.context)
             .inflate(R.layout.wifi_item_view, viewGroup, false)
-        return WifiViewHolder(view)
+        return WifiItemViewHolder(view)
     }
 
-    override fun onBindViewHolder(viewHolder: WifiViewHolder, position: Int) {
+    override fun onBindViewHolder(viewHolder: WifiItemViewHolder, position: Int) {
         viewHolder.wifiName.text = dataSet[position].SSID
 
         viewHolder.wifiRssi.text = viewHolder.itemView.context.getString(
