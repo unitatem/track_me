@@ -22,4 +22,5 @@
     <string name="wifi_rssi">RSSI %d</string>
     <string name="wifi_frequency">Freq %d [MHz]</string>
     <string name="wifi_distance">Distance %.1f [m]</string>
+    <string name="button_bt">Bluetooth</string>
 </resources>

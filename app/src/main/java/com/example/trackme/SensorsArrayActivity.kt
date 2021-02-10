@@ -20,4 +20,9 @@ class SensorsArrayActivity : AppCompatActivity() {
         val intent = Intent(this, WifiActivity::class.java).apply {}
         startActivity(intent)
     }
+
+    fun onClickBtButton(view: View) {
+        val intent = Intent(this, BtActivity::class.java).apply {}
+        startActivity(intent)
+    }
 }

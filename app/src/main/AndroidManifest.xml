@@ -19,6 +19,9 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.TrackMe">
         <activity
+            android:name=".BtActivity"
+            android:parentActivityName=".SensorsArrayActivity" />
+        <activity
             android:name=".WifiActivity"
             android:parentActivityName=".SensorsArrayActivity" />
         <activity
