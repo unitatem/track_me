@@ -5,7 +5,7 @@ import kotlin.math.pow
 
 class WifiDistance {
     fun getDistance(rssi: Double, frequency: Double): Double {
-        return stackoverflowEquation(rssi)
+        return stackoverflowEquation(rssi, frequency)
     }
 
     // TODO
@@ -21,9 +21,17 @@ class WifiDistance {
     }
 
     // https://electronics.stackexchange.com/questions/83354/calculate-distance-from-rssi
-    private fun stackoverflowEquation(rssi: Double): Double {
-        val referenceRssi = -30 // received signal strength in dBm at 1 metre
-        val propagationConstant = 2 // also path-loss exponent
+    private fun stackoverflowEquation(rssi: Double, frequency: Double): Double {
+        val propagationConstant: Double // also path-loss exponent
+        val referenceRssi: Int // received signal strength in dBm at 1 metre
+
+        if (frequency < GHz(5.0)) {
+            referenceRssi = -30
+            propagationConstant = 2.0
+        } else {
+            referenceRssi = -40
+            propagationConstant = 3.0
+        }
 
         val distance = 10.0.pow((referenceRssi - rssi) / (10.0 * propagationConstant))
         return distance
@@ -36,6 +44,10 @@ class WifiDistance {
 
         fun convertHz2MHz(hz: Double): Double {
             return hz / 1000000.0
+        }
+
+        fun GHz(value: Double): Double {
+            return value * 1000000000
         }
     }
 }

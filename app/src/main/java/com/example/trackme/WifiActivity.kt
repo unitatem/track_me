@@ -12,12 +12,14 @@ import androidx.annotation.RequiresApi
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 
+data class WifiPointMetadata(val scanResult: ScanResult, val distance: Double)
 
-class WiFiAdapter(private val dataSet: ArrayList<ScanResult>) :
+class WiFiAdapter(private val dataSet: ArrayList<WifiPointMetadata>) :
     RecyclerView.Adapter<WiFiAdapter.WifiItemViewHolder>() {
 
     class WifiItemViewHolder(view: View) : RecyclerView.ViewHolder(view) {
         val wifiName: TextView = view.findViewById(R.id.wifi_name)
+        val wifiMacAddress: TextView = view.findViewById(R.id.wifi_mac_address)
         val wifiRssi: TextView = view.findViewById(R.id.wifi_rssi)
         val wifiFrequency: TextView = view.findViewById(R.id.wifi_frequency)
         val wifiDistance: TextView = view.findViewById(R.id.wifi_distance)
@@ -30,38 +32,40 @@ class WiFiAdapter(private val dataSet: ArrayList<ScanResult>) :
     }
 
     override fun onBindViewHolder(viewHolder: WifiItemViewHolder, position: Int) {
-        viewHolder.wifiName.text = dataSet[position].SSID
+        viewHolder.wifiName.text = dataSet[position].scanResult.SSID
+        viewHolder.wifiMacAddress.text = dataSet[position].scanResult.BSSID
 
         viewHolder.wifiRssi.text = viewHolder.itemView.context.getString(
-            R.string.wifi_rssi, dataSet[position].level
-        )
+            R.string.wifi_rssi, dataSet[position].scanResult.level)
 
         viewHolder.wifiFrequency.text = viewHolder.itemView.context.getString(
-            R.string.wifi_frequency,
-            dataSet[position].frequency
-        )
+            R.string.wifi_frequency, dataSet[position].scanResult.frequency)
 
         viewHolder.wifiDistance.text = viewHolder.itemView.context.getString(
-            R.string.wifi_distance, WifiDistance().getDistance(
-                dataSet[position].level.toDouble(),
-                WifiDistance.convertMHz2Hz(dataSet[position].frequency.toDouble())
-            )
-        )
+            R.string.wifi_distance, dataSet[position].distance)
     }
 
     override fun getItemCount() = dataSet.size
 
     companion object {
-        fun sort(data: ArrayList<ScanResult>) {
-            data.sortWith(Comparator { lhs, rhs -> rhs.level - lhs.level })
+        fun sort(data: ArrayList<WifiPointMetadata>) {
+            data.sortWith(Comparator { lhs, rhs ->
+                when {
+                    lhs.distance < rhs.distance -> -1
+                    lhs.distance > rhs.distance -> 1
+                    else -> 0
+                }
+            })
         }
     }
 }
 
 class WifiActivity : WifiStrategy() {
-    private var wifiScanResults: ArrayList<ScanResult> = arrayListOf<ScanResult>()
+    private val TAG: String = "WifiActivity"
+    private var wifiScanResults: ArrayList<WifiPointMetadata> = arrayListOf()
 
     override fun onCreate(savedInstanceState: Bundle?) {
+        Log.i(TAG, "onCreate >")
         setContentView(R.layout.activity_wifi)
         super.onCreate(savedInstanceState)
 
@@ -72,28 +76,39 @@ class WifiActivity : WifiStrategy() {
 
     @RequiresApi(Build.VERSION_CODES.R)
     override fun scanResultsSuccess() {
+        Log.d(TAG, "scanResultsSuccess >")
         showMessage("Scan Results Success")
 
-        val scanResults = if (EnvironmentInfo().isRealDevice()) {
+        val rawScanResults = if (EnvironmentInfo().isRealDevice()) {
             mWifiManager.scanResults
         } else {
             EnvironmentSimulation.Wifi().getScanResults()
         }
-        WiFiAdapter.sort(scanResults as ArrayList<ScanResult>)
+        val scanResults = rawScanResults.map { it ->
+            WifiPointMetadata(
+                it,
+                WifiDistance().getDistance(
+                    it.level.toDouble(),
+                    WifiDistance.convertMHz2Hz(it.frequency.toDouble())))
+        }
+
+        WiFiAdapter.sort(scanResults as ArrayList<WifiPointMetadata>)
 
         wifiScanResults.clear()
         wifiScanResults.addAll(scanResults)
-        Log.d("Wifi", wifiScanResults.toString())
+        Log.v(TAG, "{wifiScanResults=$wifiScanResults}")
 
         val recyclerViewWifi = findViewById<View>(R.id.rv_wifi) as RecyclerView
         recyclerViewWifi.adapter?.notifyDataSetChanged()
     }
 
     override fun scanResultsFailure() {
+        Log.d(TAG, "scanResultsFailure >")
         showMessage("Scan Results Failure")
     }
 
     override fun scanRequestFailure() {
+        Log.d(TAG, "scanRequestFailure >")
         showMessage("Scan Request Failure")
     }
 }
