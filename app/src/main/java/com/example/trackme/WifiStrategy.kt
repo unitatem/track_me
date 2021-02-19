@@ -8,12 +8,20 @@ import android.content.pm.PackageManager
 import android.net.wifi.WifiManager
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.util.Log
 import com.google.android.material.snackbar.Snackbar
 
 abstract class WifiStrategy : AppCompatActivity() {
+    private val TAG: String = WifiStrategy::class.qualifiedName.toString()
+
+    private class RequestCode {
+        companion object {
+            const val kRequestWifiPermissions = 345
+        }
+    }
+
     protected open lateinit var mWifiManager: WifiManager
 
-    private val kRequestWifiIdentifier = 345
     private val mRequiredPermissions = arrayOf(
         android.Manifest.permission.ACCESS_COARSE_LOCATION,
         android.Manifest.permission.ACCESS_FINE_LOCATION,
@@ -22,18 +30,27 @@ abstract class WifiStrategy : AppCompatActivity() {
     )
 
     override fun onCreate(savedInstanceState: Bundle?) {
+        Log.i(TAG, "onCreate >")
         super.onCreate(savedInstanceState)
 
         mWifiManager = getSystemService(Context.WIFI_SERVICE) as WifiManager
         requestWifiPermissionsAndStartScan()
     }
 
+    override fun onDestroy() {
+        Log.i(TAG, "onDestroy >")
+        super.onDestroy()
+
+        unregisterReceiver(mWifiScanBroadcastReceiver)
+    }
+
     private fun requestWifiPermissionsAndStartScan() {
+        Log.d(TAG, "requestWifiPermissionsAndStartScan >")
         if (mRequiredPermissions
                 .map { checkSelfPermission(it) }
                 .all { it == PackageManager.PERMISSION_GRANTED }
         ) {
-            showMessage("Permissions are present")
+            Log.d(TAG, "Permissions are present")
             startWifiScan()
             return
         }
@@ -44,7 +61,7 @@ abstract class WifiStrategy : AppCompatActivity() {
         ) {
             showMessage("Needs this permissions")
         }
-        requestPermissions(mRequiredPermissions, kRequestWifiIdentifier)
+        requestPermissions(mRequiredPermissions, RequestCode.kRequestWifiPermissions)
     }
 
     override fun onRequestPermissionsResult(
@@ -52,7 +69,8 @@ abstract class WifiStrategy : AppCompatActivity() {
         permissions: Array<out String>,
         grantResults: IntArray
     ) {
-        if (requestCode != kRequestWifiIdentifier) {
+        Log.d(TAG, "onRequestPermissionsResult > {requestCode=$requestCode}")
+        if (requestCode != RequestCode.kRequestWifiPermissions) {
             super.onRequestPermissionsResult(requestCode, permissions, grantResults)
             return
         }
@@ -65,6 +83,7 @@ abstract class WifiStrategy : AppCompatActivity() {
     }
 
     private fun startWifiScan() {
+        Log.d(TAG, "startWifiScan >")
         registerWifiBroadcastListener()
         val success = mWifiManager.startScan()
         if (!success) {
@@ -73,20 +92,22 @@ abstract class WifiStrategy : AppCompatActivity() {
     }
 
     private fun registerWifiBroadcastListener() {
-        val wifiScanReceiver = object : BroadcastReceiver() {
-            override fun onReceive(context: Context, intent: Intent) {
-                val success = intent.getBooleanExtra(WifiManager.EXTRA_RESULTS_UPDATED, false)
-                if (success) {
-                    scanResultsSuccess()
-                } else {
-                    scanResultsFailure()
-                }
-            }
-        }
+        Log.d(TAG, "registerWifiBroadcastListener >")
 
         val intentFilter = IntentFilter()
         intentFilter.addAction(WifiManager.SCAN_RESULTS_AVAILABLE_ACTION)
-        registerReceiver(wifiScanReceiver, intentFilter)
+        registerReceiver(mWifiScanBroadcastReceiver, intentFilter)
+    }
+
+    private val mWifiScanBroadcastReceiver = object : BroadcastReceiver() {
+        override fun onReceive(context: Context, intent: Intent) {
+            val success = intent.getBooleanExtra(WifiManager.EXTRA_RESULTS_UPDATED, false)
+            if (success) {
+                scanResultsSuccess()
+            } else {
+                scanResultsFailure()
+            }
+        }
     }
 
     protected fun showMessage(text: String) {

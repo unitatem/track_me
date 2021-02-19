@@ -61,16 +61,17 @@ class WiFiAdapter(private val dataSet: ArrayList<WifiPointMetadata>) :
 }
 
 class WifiActivity : WifiStrategy() {
-    private val TAG: String = "WifiActivity"
-    private var wifiScanResults: ArrayList<WifiPointMetadata> = arrayListOf()
+    private val TAG: String = WifiActivity::class.qualifiedName.toString()
+    private var mWifiScanResults: ArrayList<WifiPointMetadata> = arrayListOf()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         Log.i(TAG, "onCreate >")
+
         setContentView(R.layout.activity_wifi)
         super.onCreate(savedInstanceState)
 
         val recyclerViewWifi = findViewById<View>(R.id.rv_wifi) as RecyclerView
-        recyclerViewWifi.adapter = WiFiAdapter(wifiScanResults)
+        recyclerViewWifi.adapter = WiFiAdapter(mWifiScanResults)
         recyclerViewWifi.layoutManager = LinearLayoutManager(this)
     }
 
@@ -94,9 +95,9 @@ class WifiActivity : WifiStrategy() {
 
         WiFiAdapter.sort(scanResults as ArrayList<WifiPointMetadata>)
 
-        wifiScanResults.clear()
-        wifiScanResults.addAll(scanResults)
-        Log.v(TAG, "{wifiScanResults=$wifiScanResults}")
+        mWifiScanResults.clear()
+        mWifiScanResults.addAll(scanResults)
+        Log.v(TAG, "{wifiScanResults=$mWifiScanResults}")
 
         val recyclerViewWifi = findViewById<View>(R.id.rv_wifi) as RecyclerView
         recyclerViewWifi.adapter?.notifyDataSetChanged()

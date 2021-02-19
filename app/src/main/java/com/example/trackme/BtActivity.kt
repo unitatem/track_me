@@ -17,7 +17,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.snackbar.Snackbar
 
-class BtPointMetadata(val name: String?, val macAddress: String)
+data class BtPointMetadata(val name: String?, val macAddress: String)
 
 class BtAdapter(private val dataSet: ArrayList<BtPointMetadata>) :
     RecyclerView.Adapter<BtAdapter.BtItemViewHolder>() {
@@ -42,11 +42,15 @@ class BtAdapter(private val dataSet: ArrayList<BtPointMetadata>) :
 }
 
 class BtActivity : AppCompatActivity() {
-    private val TAG: String = "BtActivity"
-    private val REQUEST_ENABLE_BT: Int = 45652
+    private val TAG: String = BtActivity::class.qualifiedName.toString()
+
+    private class RequestCode {
+        companion object {
+            const val kRequestEnableBt: Int = 45652
+        }
+    }
 
     private val btResult: ArrayList<BtPointMetadata> = arrayListOf()
-
     private val bluetoothAdapter: BluetoothAdapter? by lazy { BluetoothAdapter.getDefaultAdapter() }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -58,49 +62,61 @@ class BtActivity : AppCompatActivity() {
         recyclerViewBt.adapter = BtAdapter(btResult)
         recyclerViewBt.layoutManager = LinearLayoutManager(this)
 
-        // getBTAdapter
         if (bluetoothAdapter == null) {
+            Log.i(TAG, "Device doesn't support Bluetooth")
             showMessage("Device doesn't support Bluetooth")
             return
         }
 
-        // Register for broadcasts when a device is discovered.
-        val filter = IntentFilter(BluetoothDevice.ACTION_FOUND)
-        registerReceiver(receiver, filter)
-
-        // enableBT
-        if (bluetoothAdapter?.isEnabled == false) {
-            showMessage("Request to enable BT")
-            val enableBtIntent = Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE)
-            startActivityForResult(enableBtIntent, REQUEST_ENABLE_BT)
-        } else {
-            btEnabled()
-        }
+        registerBtListener()
+        enableAndScanBt()
     }
 
     override fun onDestroy() {
         Log.i(TAG, "onDestroy >")
         super.onDestroy()
 
-        unregisterReceiver(receiver)
+        unregisterReceiver(mBtBroadcastReceiver)
+    }
+
+    private fun registerBtListener() {
+        val filter = IntentFilter(BluetoothDevice.ACTION_FOUND)
+        registerReceiver(mBtBroadcastReceiver, filter)
+    }
+
+    private fun enableAndScanBt() {
+        if (bluetoothAdapter?.isEnabled == false) {
+            Log.v(TAG, "Request to enable BT")
+            showMessage("Request to enable BT")
+
+            val enableBtIntent = Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE)
+            startActivityForResult(enableBtIntent, RequestCode.kRequestEnableBt)
+        } else {
+            scanBtDevices()
+        }
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        Log.i(TAG, "onActivityResult > {requestCode=$requestCode, resultCode=$resultCode}")
-        if (requestCode != REQUEST_ENABLE_BT) {
+        Log.d(TAG, "onActivityResult > {requestCode=$requestCode, resultCode=$resultCode}")
+
+        if (requestCode != RequestCode.kRequestEnableBt) {
             super.onActivityResult(requestCode, resultCode, data)
+            return
         }
 
-        if (resultCode == RESULT_OK) {
-            showMessage("BT enabled")
-            btEnabled()
-        } else {
+        if (resultCode != RESULT_OK) {
+            Log.e(TAG, "BT failed to enable. Error=$resultCode")
             showMessage("BT failed to enable. $resultCode")
+            return
         }
+
+        scanBtDevices()
     }
 
-    private fun btEnabled() {
-        Log.d(TAG, "btEnabled >")
+    private fun scanBtDevices() {
+        Log.d(TAG, "scanBtDevices >")
+        showMessage("BT enabled")
+
         bluetoothAdapter?.startDiscovery()
 
         // clean recycler view
@@ -109,7 +125,7 @@ class BtActivity : AppCompatActivity() {
         recyclerViewBt.adapter?.notifyDataSetChanged()
     }
 
-    private val receiver = object : BroadcastReceiver() {
+    private val mBtBroadcastReceiver = object : BroadcastReceiver() {
         override fun onReceive(context: Context, intent: Intent) {
             when(intent.action) {
                 BluetoothDevice.ACTION_FOUND -> {
