@@ -17,11 +17,14 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.snackbar.Snackbar
 
-class BtAdapter(private val dataSet: ArrayList<String>) :
+class BtPointMetadata(val name: String?, val macAddress: String)
+
+class BtAdapter(private val dataSet: ArrayList<BtPointMetadata>) :
     RecyclerView.Adapter<BtAdapter.BtItemViewHolder>() {
 
     class BtItemViewHolder(view: View) : RecyclerView.ViewHolder(view) {
         val btName: TextView = view.findViewById(R.id.bt_name)
+        val btMACAddress: TextView = view.findViewById(R.id.bt_mac_address)
     }
 
     override fun onCreateViewHolder(viewGroup: ViewGroup, viewType: Int): BtItemViewHolder {
@@ -31,7 +34,8 @@ class BtAdapter(private val dataSet: ArrayList<String>) :
     }
 
     override fun onBindViewHolder(viewHolder: BtItemViewHolder, position: Int) {
-        viewHolder.btName.text = dataSet[position]
+        viewHolder.btName.text = dataSet[position].name
+        viewHolder.btMACAddress.text = dataSet[position].macAddress
     }
 
     override fun getItemCount() = dataSet.size
@@ -41,7 +45,7 @@ class BtActivity : AppCompatActivity() {
     private val TAG: String = "BtActivity"
     private val REQUEST_ENABLE_BT: Int = 45652
 
-    private val btResult: ArrayList<String> = arrayListOf<String>()
+    private val btResult: ArrayList<BtPointMetadata> = arrayListOf()
 
     private val bluetoothAdapter: BluetoothAdapter? by lazy { BluetoothAdapter.getDefaultAdapter() }
 
@@ -105,21 +109,21 @@ class BtActivity : AppCompatActivity() {
         recyclerViewBt.adapter?.notifyDataSetChanged()
     }
 
-    // Create a BroadcastReceiver for ACTION_FOUND.
     private val receiver = object : BroadcastReceiver() {
         override fun onReceive(context: Context, intent: Intent) {
             when(intent.action) {
                 BluetoothDevice.ACTION_FOUND -> {
-                    val device: BluetoothDevice? = intent.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE)
-                    val deviceName = device?.name
-                    val deviceMACAddress = device?.address // MAC address
+                    val device: BluetoothDevice =
+                        intent.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE) ?: return
+
+                    val deviceName = device.name
+                    val deviceMACAddress = device.address
                     Log.v(TAG, "BT device found: {deviceName=$deviceName, deviceMacAddress=$deviceMACAddress}")
 
-                    if (deviceName != null) {
-                        btResult.add(deviceName)
-                        val recyclerViewBt = findViewById<View>(R.id.rv_bt) as RecyclerView
-                        recyclerViewBt.adapter?.notifyDataSetChanged()
-                    }
+                    val record = BtPointMetadata(deviceName, deviceMACAddress)
+                    btResult.add(record)
+                    val recyclerViewBt = findViewById<View>(R.id.rv_bt) as RecyclerView
+                    recyclerViewBt.adapter?.notifyDataSetChanged()
                 }
             }
         }
