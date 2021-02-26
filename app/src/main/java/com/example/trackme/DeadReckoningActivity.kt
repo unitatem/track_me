@@ -14,6 +14,7 @@ class DeadReckoningActivity : AppCompatActivity() {
     private val TAG: String = DeadReckoningActivity::class.qualifiedName.toString()
 
     private val mAccelerometer by lazy { AccelerometerPublisher.getInstance(this) }
+//    private val mDeadReckoningEngine by lazy { DeadReckoningEngine() }
 
     private var position = Vector3f()
     private var velocity = Vector3f()
@@ -48,6 +49,10 @@ class DeadReckoningActivity : AppCompatActivity() {
             position.x += velocity.x * deltaTimeS
             position.y += velocity.y * deltaTimeS
             position.z += velocity.z * deltaTimeS
+
+
+//            mDeadReckoningEngine.nextStep()
+//            mDeadReckoningEngine.getState()
 
             findViewById<TextView>(R.id.pos_N_val_m).text = getString(R.string.acc_x_val, position.x)
             findViewById<TextView>(R.id.pos_E_val_m).text = getString(R.string.acc_y_val, position.y)
