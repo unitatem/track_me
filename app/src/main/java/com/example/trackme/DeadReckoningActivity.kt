@@ -8,9 +8,15 @@ import android.hardware.SensorManager
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.os.SystemClock
+import android.util.Log
 import android.widget.TextView
+import com.example.trackme.sensor.AccelerometerPublisher
+import com.example.trackme.sensor.SensorSubscriber
+import com.example.trackme.sensor.Vector3d
 
 class DeadReckoningActivity : AppCompatActivity(), SensorEventListener {
+    private val TAG: String = DeadReckoningActivity::class.qualifiedName.toString()
+
     private lateinit var sensorManager: SensorManager
     private var inertiaSensor: Sensor? = null
 
@@ -34,6 +40,11 @@ class DeadReckoningActivity : AppCompatActivity(), SensorEventListener {
 
         sensorManager = getSystemService(Context.SENSOR_SERVICE) as SensorManager
         inertiaSensor = sensorManager.getDefaultSensor(Sensor.TYPE_LINEAR_ACCELERATION)
+    }
+
+    private val mAccelerometerSubscriber = object: SensorSubscriber() {
+        override fun update(data: Vector3d) {
+        }
     }
 
     override fun onAccuracyChanged(sensor: Sensor?, accuracy: Int) {
@@ -73,10 +84,16 @@ class DeadReckoningActivity : AppCompatActivity(), SensorEventListener {
             sensorManager.registerListener(this, sensor, SensorManager.SENSOR_DELAY_NORMAL)
             lastTimestampMs = SystemClock.elapsedRealtime()
         }
+
+        val acc = AccelerometerPublisher.getInstance(this)
+        acc.subscribe(mAccelerometerSubscriber)
     }
 
     override fun onPause() {
         super.onPause()
         sensorManager.unregisterListener(this)
+
+        val acc = AccelerometerPublisher.getInstance(this)
+        acc.unsubscribe(mAccelerometerSubscriber)
     }
 }
