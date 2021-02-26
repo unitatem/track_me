@@ -23,7 +23,7 @@ abstract class SensorPublisher {
 
     protected abstract fun lastSubscriberUnregistered()
 
-    protected fun notifySubscribers(data: Vector3d) {
+    protected fun notifySubscribers(data: AccelerometerMeasure) {
         mSubscribers.forEach { it -> it.update(data) }
     }
 }

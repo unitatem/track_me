@@ -7,6 +7,8 @@ import android.hardware.SensorEventListener
 import android.hardware.SensorManager
 import android.util.Log
 
+data class AccelerometerMeasure(val measure: Vector3f, val timestampMs: Long)
+
 class AccelerometerPublisher private constructor(private val mContext: Context): SensorPublisher(), SensorEventListener {
     private val TAG: String = AccelerometerPublisher::class.qualifiedName.toString()
 
@@ -19,6 +21,7 @@ class AccelerometerPublisher private constructor(private val mContext: Context):
 
     companion object {
         private var mInstance: AccelerometerPublisher? = null
+
         fun getInstance(context: Context): AccelerometerPublisher {
             if (mInstance == null) {
                 mInstance = AccelerometerPublisher(context)
@@ -42,11 +45,11 @@ class AccelerometerPublisher private constructor(private val mContext: Context):
     override fun onSensorChanged(event: SensorEvent?) {
         if (event == null) return
 
-        val vector3d = Vector3d(
-            event.values[1].toDouble(), event.values[0].toDouble(), event.values[2].toDouble()
-        )
+        val timestampMs: Long = (event.timestamp / 1000000.0f).toLong()
+        val measure = Vector3f(event.values[1], event.values[0], event.values[2])
 
-        notifySubscribers(vector3d)
+        val data = AccelerometerMeasure(measure, timestampMs)
+        notifySubscribers(data)
     }
 
     override fun onAccuracyChanged(sensor: Sensor?, accuracy: Int) {
