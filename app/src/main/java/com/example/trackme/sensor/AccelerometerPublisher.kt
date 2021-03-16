@@ -15,7 +15,7 @@ class AccelerometerPublisher private constructor(private val mContext: Context):
     private val sensorManager: SensorManager by lazy { mContext.getSystemService(Context.SENSOR_SERVICE) as SensorManager }
     private val inertiaSensor: Sensor? by lazy { sensorManager.getDefaultSensor(Sensor.TYPE_LINEAR_ACCELERATION) }
 
-    private val mCalibration: AccelerometerCalibration by lazy { AccelerometerCalibration(250) }
+    private val mCalibration: AccelerometerCalibration by lazy { AccelerometerCalibration(500) }
 
     init {
         Log.i(TAG, "init >")
@@ -35,7 +35,7 @@ class AccelerometerPublisher private constructor(private val mContext: Context):
     override fun firstSubscriberRegistered() {
         Log.d(TAG, "firstSubscriberRegistered >")
         inertiaSensor?.also { sensor ->
-            sensorManager.registerListener(this, sensor, SensorManager.SENSOR_DELAY_NORMAL)
+            sensorManager.registerListener(this, sensor, SensorManager.SENSOR_DELAY_FASTEST)
         }
     }
 
