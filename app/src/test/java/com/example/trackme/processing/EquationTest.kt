@@ -6,16 +6,16 @@ import org.junit.Assert.*
 
 class EquationTest {
     private val equation = object: Equation(1) {
-        override fun calculate(inputs: ArrayList<Float>) {
+        override fun calculateStep(inputs: ArrayList<Float>) {
             dx[0] = x[0]
         }
     }
 
     @Test
-    fun calculate() {
+    fun equationStateUpdatedAfterStepCalculation() {
         // When
         equation.x[0] = 11.1f
-        equation.calculate(arrayListOf())
+        equation.calculateStep(arrayListOf())
 
         // Then
         assertEquals(11.1f, equation.dx[0])
